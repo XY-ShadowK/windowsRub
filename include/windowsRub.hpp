@@ -1,6 +1,9 @@
 /*
-time: 2026/11/2 18:01:39
+Modified Time: 2026/11/2 18:01:39
+Copyright (c) 2026 XY-ShadowK
+SPDX-License-Identifier: MPL-2.0
 */
+
 #pragma once
 #ifndef _WINDOWSRUB_HPP_
 #define _WINDOWSRUB_HPP_
