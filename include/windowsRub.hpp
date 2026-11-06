@@ -32,8 +32,18 @@ inline void convertW2UTF8(const int num, const wchar_t* const* const wstrings_c,
     }
 }
 
+#if defined(_MSC_VER) && !defined(__clang__)
+    #define UNIVERSE_ENTRY \
+    int wmain(int argc, wchar_t* wargv[]) {
+#else
+    #define UNIVERSE_ENTRY \
+    int main() { \
+        int argc = 0; \
+        wchar_t** wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
+#endif
+
 #define UNIVERSE_MAIN \
-int wmain(int argc, wchar_t* wargv[]) { \
+UNIVERSE_ENTRY \
     char** argv = new char*[argc]; \
     convertW2UTF8(argc, wargv, argv);
 #define UNIVERSE_MAINEND \
