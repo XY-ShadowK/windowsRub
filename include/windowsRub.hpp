@@ -15,18 +15,21 @@ SPDX-License-Identifier: MPL-2.0
 #endif
 
 #ifdef _WIN32
+
+inline void convertW2UTF8(const int num, const wchar_t* const* const wstrings_c, char** const strings_c) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    std::string stringUTF8;
+    for(int i = 0;i < num;i ++) {
+        stringUTF8 = converter.to_bytes(wstrings_c[i]);
+        strings_c[i] = new char[strlen(stringUTF8.c_str()) + 1];
+        strcpy(strings_c[i], stringUTF8.c_str());
+    }
+}
+
 #define UNIVERSE_MAIN \
 int wmain(int argc, wchar_t* wargv[]) { \
     char** argv = new char*[argc]; \
-    { \
-        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter; \
-        std::string strU8; \
-        for(int i = 0;i < argc;i ++) { \
-            strU8 = converter.to_bytes(wargv[i]); \
-            argv[i] = new char[strlen(strU8.c_str()) + 1]; \
-            strcpy(argv[i], strU8.c_str()); \
-        } \
-    }
+    convertW2UTF8(argc, wargv, argv);
 #define UNIVERSE_MAINEND \
     for(int i = 0;i < argc;i ++) { \
         delete[] argv[i]; \
