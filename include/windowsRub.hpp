@@ -9,7 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 #define _WINDOWSRUB_HPP_
 
 #ifdef _WIN32
-#include <codecvt>
+#include <windows.h>
 #include <string>
 #include <cstring>
 #endif
@@ -17,12 +17,18 @@ SPDX-License-Identifier: MPL-2.0
 #ifdef _WIN32
 
 inline void convertW2UTF8(const int num, const wchar_t* const* const wstrings_c, char** const strings_c) {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::string stringUTF8;
     for(int i = 0;i < num;i ++) {
-        stringUTF8 = converter.to_bytes(wstrings_c[i]);
-        strings_c[i] = new char[strlen(stringUTF8.c_str()) + 1];
-        strcpy(strings_c[i], stringUTF8.c_str());
+        int len = WideCharToMultiByte(CP_UTF8, 0, wstrings_c[i], -1, nullptr, 0, nullptr, nullptr);
+        if (len == 0)
+            continue;
+        strings_c[i] = nullptr;
+        strings_c[i] = new char[len];
+        if(!strings_c[i])
+            exit(-1);
+        if (WideCharToMultiByte(CP_UTF8, 0, wstrings_c[i], -1, strings_c[i], len, nullptr, nullptr) == 0) {
+            delete[] strings_c[i];
+            exit(-1);
+        }
     }
 }
 
