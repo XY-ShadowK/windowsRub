@@ -14,3 +14,10 @@ UNIVERSE_MAIN
 	// 你的main函数体
 UNIVERSE_MAINEND
 ```
+
+使用宏 `UNIVERSE_MAIN_RETURN` 替换main函数中的 `return` 。
+
+```C++
+// return 0;
+UNIVERSE_MAIN_RETURN(0);
+```

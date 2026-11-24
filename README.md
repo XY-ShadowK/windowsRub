@@ -14,3 +14,10 @@ UNIVERSE_MAIN
 	// your main content
 UNIVERSE_MAINEND
 ```
+
+Use macro `UNIVERSE_MAIN_RETURN` to replace `return` in main.
+
+```C++
+// return 0;
+UNIVERSE_MAIN_RETURN(0);
+```
