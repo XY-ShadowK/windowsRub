@@ -4,12 +4,9 @@
 #define _FILE_UTILS_HPP_
 
 #include <string>
+#include <cstring>
 
 #include "File_Path.hpp"
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#include <cstring>
-#endif
 
 _WINDOWS_RUB_FILE_BEGIN
 
