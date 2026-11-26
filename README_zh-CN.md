@@ -24,7 +24,7 @@ UNIVERSE_MAIN_RETURN(0);
 
 ### 设置 locale 到 UTF-8
 
-定义宏 `_WINDOWSRUB_LOCALE_UTF8` 或把它添加到编译器选项。
+定义宏 `_WINDOWS_RUB_LOCALE_UTF8` 或把它添加到编译器选项。
 
 ### Get system error
 
@@ -35,4 +35,19 @@ UNIVERSE_MAIN_RETURN(0);
 std::error_code errorCode = errorUtils::SysGetLastError();
 // 获取格式化的字符串(错误码, 错误类别, 错误信息)
 std::string errorInformation = errorUtils::errorCode2String(errorCode);
+```
+
+### File Operation
+
+使用 `WindowsRub::File::FilePath` 来存放通用的文件名/路径。
+使用 `WindowsRub::File::getFilePathU8` 从UTF-8字符串来获取它。
+
+```c++
+WindowsRub::File::FilePath filePath = WindowsRub::File::getFilePathU8(filePathUTF8);
+```
+
+使用 `WindowsRub::File::cFileOpen` 如果你需要C风格 `FILE` 指针.
+
+```c++
+FILE* fp = WindowsRub::File::cFileOpen(filePath, mode);
 ```

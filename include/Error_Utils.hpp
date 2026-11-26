@@ -3,16 +3,23 @@
 #ifndef _ERRORUTILS_HPP_
 #define _ERRORUTILS_HPP_
 
+#include "Windows_Rub.hpp"
+
+#define _WINDOWS_RUB_ERROR_UTILS_BEGIN WINDOWS_RUB_NAMESPACE_BEGIN(namespace ErrorUtils {)
+#define _WINDOWS_RUB_ERROR_UTILS_END WINDOWS_RUB_NAMESPACE_END(})
+#define _WINDOWS_RUB_ERROR_UTILS WINDOWS_RUB_NAMESPACE(::ErrorUtils::)
+
 #include <string>
 #include <system_error>
 
 #if defined(_WIN32) && !defined(_LIBCPP_VERSION) && !defined(__CYGWIN__)
 #include <Windows.h>
 
-#include "windowsRub.hpp"
+#include "Convert_Utils.hpp"
+#include "Universe_Utils.hpp"
 #endif
 
-namespace errorUtils {
+_WINDOWS_RUB_ERROR_UTILS_BEGIN
 
 #if defined(_WIN32) && !defined(_LIBCPP_VERSION) && !defined(__CYGWIN__)
 [[nodiscard]] const std::error_category& WindowsCategory() noexcept;
@@ -37,23 +44,20 @@ public:
             return "Unknown error code";
             
         static constexpr const char* TRANSFORM_FAILURE_MESSAGE = "Transform error message charset to UTF-8 failed.(this is not the actual error message)";
-        int lengthU8 = getLengthW2UTF8(buffer);
+        int lengthU8 = _WINDOWS_RUB_CONVERT_UTILS getLengthW2UTF8(buffer);
         if(lengthU8 == 0)
             return TRANSFORM_FAILURE_MESSAGE;
         char* bufferU8 = nullptr;
-        bufferU8 = new char[lengthU8];
-        if(!bufferU8) {
-            fprintf(stderr, "can not allocate space by new.\n");
+        if(_WINDOWS_RUB_UNIVERSE_UTILS allocateArrayMemory(bufferU8, lengthU8))
             exit(-1);
-        }
         std::string messageStr;
-        if(convertW2UTF8(buffer, bufferU8, lengthU8))
+        if(_WINDOWS_RUB_CONVERT_UTILS convertW2UTF8(buffer, bufferU8, lengthU8))
             messageStr = TRANSFORM_FAILURE_MESSAGE;
         else
             // remove CRLF from FormatMessage
             messageStr = std::string(bufferU8, lengthU8 - 2);
         LocalFree(buffer);
-        delete[] bufferU8;
+        _WINDOWS_RUB_UNIVERSE_UTILS releaseArrayMemory(bufferU8);
         return messageStr;
     }
     [[nodiscard]] virtual std::error_condition default_error_condition(int errorValue) const noexcept override {
@@ -81,6 +85,6 @@ inline std::string errorCode2String(const std::error_code& errorCode) {
     return "Error : " + std::to_string(errorCode.value()) + ", Category : " + errorCode.category().name() + ", Message : " + errorCode.message();
 }
 
-}
+_WINDOWS_RUB_ERROR_UTILS_END
 
 #endif
